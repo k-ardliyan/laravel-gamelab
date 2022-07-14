@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
-  <title>Dashbord &mdash; @yield('title')</title>
+  <title>@yield('title')</title>
 
   <!-- General CSS Files -->
+  <link rel="shortcut icon" href="{{asset('images/books.png')}}" type="image/x-icon">
   <link rel="stylesheet" href="{{asset('css/bootstrap.min.css')}}">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 
@@ -67,6 +68,6 @@
   <script src="{{asset('js/custom.js')}}"></script>
 
   <!-- Page Specific JS File -->
-  @stack('js')
+  @stack('scripts')
 </body>
 </html>

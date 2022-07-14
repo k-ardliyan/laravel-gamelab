@@ -217,25 +217,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
     <script src="{{asset('js/bootstrap.bundle.min.js')}}"></script>
-    <script>
-        // Tooltip
-        $(function () {
-            $('[data-toggle="tooltip"]').tooltip()
-        })
-
-        // Smooth Scoll Click
-        $('a[href^="#"]').click(function () {
-
-            var the_id = $(this).attr("href");
-
-            $('html, body').animate({
-                scrollTop: $(the_id).offset().top
-            }, 'slow');
-
-            return false;
-        });
-
-    </script>
 </body>
 
 </html>
