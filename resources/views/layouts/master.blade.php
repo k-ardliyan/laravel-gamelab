@@ -3,12 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
-  <title>@yield('title')</title>
+  <title>Mini Library &mdash; @yield('title')</title>
+
+  <!-- CSRF Token -->
+  <meta name="csrf-token" content="{{ csrf_token() }}">
 
   <!-- General CSS Files -->
   <link rel="shortcut icon" href="{{asset('images/books.png')}}" type="image/x-icon">
   <link rel="stylesheet" href="{{asset('css/bootstrap.min.css')}}">
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
 
   <!-- CSS Libraries -->
 
@@ -16,8 +19,8 @@
   <link rel="stylesheet" href="{{asset('css/style.css')}}">
   <link rel="stylesheet" href="{{asset('css/components.css')}}">
 
-    <!-- Custom style CSS -->
-    @yield('css')
+  <!-- Custom style CSS -->
+  @yield('css')
 </head>
 
 <body>
@@ -62,6 +65,7 @@
   <script src="{{asset('js/stisla.js')}}"></script>
 
   <!-- JS Libraies -->
+  @include('sweetalert::alert')
 
   <!-- Template JS File -->
   <script src="{{asset('js/scripts.js')}}"></script>

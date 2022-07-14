@@ -1,6 +1,6 @@
 <aside id="sidebar-wrapper">
 <div class="sidebar-brand">
-    <a href="index.html">Mini Libary</a>
+    <a href="index.html">Mini Library</a>
 </div>
 <div class="sidebar-brand sidebar-brand-sm">
     <a href="index.html">ML</a>
@@ -22,22 +22,22 @@
         <li class=""><a class="nav-link" href="#">Add Booking</a></li>
         </ul>
     </li>
-    <li class="nav-item dropdown {{Request::is('books') ? 'active' : ''}}">
-        <a href="#" class="nav-link has-dropdown"><i class="fas fa-th"></i> <span>Books</span></a>
+    <li class="nav-item dropdown @if (Request::is('book*')) active @endif">
+        <a href="#" class="nav-link has-dropdown"><i class="fas fa-book"></i> <span>Books</span></a>
         <ul class="dropdown-menu">
             <li class="{{Request::is('books') ? 'active' : ''}}"><a class="nav-link" href="{{route('books')}}">All Book</a></li>
-            <li class="{{Request::is('books') ? 'active' : ''}}"><a class="nav-link" href="{{route('books.create')}}">Add Book</a></li>
+            <li class="{{Request::is('book/create') ? 'active' : ''}}"><a class="nav-link" href="{{route('books.create')}}">Add Book</a></li>
         </ul>
     </li>
-    <li class="nav-item dropdown {{Request::is('members') ? 'active' : ''}}">
-        <a href="#" class="nav-link has-dropdown"><i class="fas fa-th"></i> <span>Members</span></a>
+    <li class="nav-item dropdown @if (Request::is('member*')) active @endif">
+        <a href="#" class="nav-link has-dropdown"><i class="fas fa-user"></i> <span>Members</span></a>
         <ul class="dropdown-menu">
             <li class="{{Request::is('members') ? 'active' : ''}}"><a class="nav-link" href="{{route('members')}}">All Member</a></li>
-            <li class="{{Request::is('members.create') ? 'active' : ''}}"><a class="nav-link" href="{{route('members.create')}}">Add Member</a></li>
+            <li class="{{Request::is('member/create') ? 'active' : ''}}"><a class="nav-link" href="{{route('members.create')}}">Add New Member</a></li>
         </ul>
     </li>
     <div class="mb-4 p-3 hide-sidebar-mini">
-    <a href="https://getstisla.com/docs" class="btn btn-primary btn-lg btn-block btn-icon-split">
+    <a href="https://github.com/k-ardliyan" class="btn btn-primary btn-lg btn-block btn-icon-split">
         <i class="fas fa-rocket"></i> Documentation
     </a>
     </div>

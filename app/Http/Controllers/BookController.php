@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Book;
+use Alert;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class BookController extends Controller
 {
@@ -14,7 +16,9 @@ class BookController extends Controller
      */
     public function index()
     {
-        //
+        return view('book.index', [
+            'books' => Book::all()
+        ]);
     }
 
     /**
@@ -24,7 +28,7 @@ class BookController extends Controller
      */
     public function create()
     {
-        //
+        return view('book.create');
     }
 
     /**
@@ -35,7 +39,34 @@ class BookController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // condition save cover_image upload
+        if ($request->hasFile('cover_image')) {
+            // get filename with extension
+            $fileNameWithExt = $request->file('cover_image')->getClientOriginalName();
+            // get just filename
+            $fileName = pathinfo($fileNameWithExt, PATHINFO_FILENAME);
+            // get just extension
+            $extension = $request->file('cover_image')->getClientOriginalExtension();
+            // filename to store
+            $fileNameToStore = $fileName . '_' . time() . '.' . $extension;
+            // upload image
+            $path = $request->file('cover_image')->storeAs('public/images', $fileNameToStore);
+        } else {
+            $fileNameToStore = 'noimage.jpg';
+        }
+
+        // create book
+        $book = new Book;
+        $book->title = $request->title;
+        $book->author = $request->author;
+        $book->isbn = $request->isbn;
+        $book->condition = $request->condition;
+        $book->cover_image = $fileNameToStore;
+        $book->save();
+
+        Alert::success('Success', 'Book has been added');
+        return redirect()->route('books');
+
     }
 
     /**
@@ -57,7 +88,7 @@ class BookController extends Controller
      */
     public function edit(Book $book)
     {
-        //
+        return response()->json($book);
     }
 
     /**
@@ -69,7 +100,31 @@ class BookController extends Controller
      */
     public function update(Request $request, Book $book)
     {
-        //
+        // condition save cover_image upload replace old image
+        if ($request->hasFile('cover_image')) {
+            // get filename with extension
+            $fileNameWithExt = $request->file('cover_image')->getClientOriginalName();
+            // get just filename
+            $fileName = pathinfo($fileNameWithExt, PATHINFO_FILENAME);
+            // get just extension
+            $extension = $request->file('cover_image')->getClientOriginalExtension();
+            // filename to store
+            $fileNameToStore = $fileName . '_' . time() . '.' . $extension;
+            // upload image
+            $path = $request->file('cover_image')->storeAs('public/images', $fileNameToStore);
+        } else {
+            $fileNameToStore = $book->cover_image;
+        }
+
+        // update book
+        $book->title = $request->title;
+        $book->author = $request->author;
+        $book->isbn = $request->isbn;
+        $book->condition = $request->condition;
+        $book->cover_image = $fileNameToStore;
+        $book->save();
+
+        return response()->json($book);
     }
 
     /**
@@ -80,6 +135,13 @@ class BookController extends Controller
      */
     public function destroy(Book $book)
     {
-        //
+        // delete cover_image
+        if ($book->cover_image != 'noimage.jpg') {
+            // delete image
+            Storage::delete('public/images/' . $book->cover_image);
+        }
+        // delete book
+        $book->delete();
+        return response()->json($book);
     }
 }
