@@ -149,7 +149,6 @@
                 type: "GET",
                 dataType: "JSON",
                 success: function(data) {
-                    console.log(data);
                     $('#bookEditForm').attr('action', "{{ url('/') }}/book/" + id);
                     if (data.condition == 'New') {
                         $('#customRadio1').prop('checked', true);

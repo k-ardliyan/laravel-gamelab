@@ -15,11 +15,11 @@
         </a>
     </li>
     <li class="menu-header">Entities</li>
-    <li class="nav-item dropdown">
+    <li class="nav-item dropdown @if (Request::is('issue*')) active @endif">
         <a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i class="fas fa-columns"></i> <span>Issues</span></a>
         <ul class="dropdown-menu">
-        <li class=""><a class="nav-link" href="#">All Booking</a></li>
-        <li class=""><a class="nav-link" href="#">Add Booking</a></li>
+        <li class="@if (Request::is('issues')) active @endif"><a class="nav-link" href="{{ route('issues') }}">All Booking</a></li>
+        <li class="@if (Request::is('issue/create')) active @endif"><a class="nav-link" href="{{ route('issues.create') }}">Add Booking</a></li>
         </ul>
     </li>
     <li class="nav-item dropdown @if (Request::is('book*')) active @endif">

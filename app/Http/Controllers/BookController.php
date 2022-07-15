@@ -144,4 +144,11 @@ class BookController extends Controller
         $book->delete();
         return response()->json($book);
     }
+
+    public function getCoverImage($id)
+    {
+        $book = Book::find($id);
+        // return json
+        return response()->json($book->cover_image);
+    }
 }

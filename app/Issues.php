@@ -13,6 +13,8 @@ class Issues extends Model
         'book_id',
         'issue_date',
         'return_date',
+        'due_date',
+        'is_booked',
     ];
 
     public function member()
