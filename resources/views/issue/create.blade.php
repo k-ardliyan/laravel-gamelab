@@ -23,16 +23,20 @@
                             <div class="form-row">
                                 <div class="form-group col-12">
                                   <label for="inputBook">Find Book</label>
-                                  <select name="book_id" id="inputBook" class="form-control p-0" title="Find the books...">
+                                  <select name="book_id" id="inputBook" class="form-control p-0" title="Find the books..." required>
                                     {{-- cek books is booked on issues or not --}}
                                     @foreach ($books as $book)
-                                    <option data-icon="fa fa-book" value="{{ $book->id }}" data-subtext="{{ $book->author }}">{{ $book->title }}</option>
+                                        @if ($book->issues->where('is_booked', 1)->count() == 0)
+                                            <option data-icon="fa fa-book" value="{{ $book->id }}" data-subtext="{{ $book->author }}">{{ $book->title }}</option>
+                                        @else
+                                            <option data-icon="fa fa-book" value="{{ $book->id }}" data-subtext="{{ $book->author }}" disabled>{{ $book->title }}</option>
+                                        @endif
                                     @endforeach
                                   </select>
                                 </div>
                                 <div class="form-group col-12">
                                   <label for="inputMember">Find Member</label>
-                                  <select name="member_id" id="inputMember" class="form-control p-0"title="Find the members...">
+                                  <select name="member_id" id="inputMember" class="form-control p-0"title="Find the members..." required>
                                     @foreach ($members as $member)
                                       <option data-icon="fa fa-user" value="{{ $member->id }}">{{ $member->first_name . ' ' . $member->last_name}}</option>
                                     @endforeach
@@ -41,15 +45,15 @@
                                 <div class="form-row w-100">
                                     <div class="form-group col-md-4">
                                         <label for="inputIssueDate">Issue Date</label>
-                                        <input type="date" class="form-control" id="inputIssueDate" name="issue_date" value="{{ date('Y-m-d') }}">
+                                        <input type="date" class="form-control" id="inputIssueDate" name="issue_date" value="{{ date('Y-m-d') }}" required>
                                     </div>
                                     <div class="form-group col-md-4">
                                         <label for="inputReturnDate">Return Date</label>
-                                        <input type="date" class="form-control" id="inputReturnDate" name="return_date" value="">
+                                        <input type="date" class="form-control" id="inputReturnDate" name="return_date" value="" required>
                                     </div>
                                     <div class="form-group col-md-4">
-                                        <label for="inputDueDate">Due Date</label>
-                                        <input type="number" class="form-control" id="inputDueDate" name="due_date" readonly>
+                                        <label for="inputDueDate">Duration</label>
+                                        <input type="number" class="form-control" id="inputDueDate" name="due_date" readonly required>
                                         <input type="hidden" name="is_booked" value="1">
                                     </div>
                                 </div>

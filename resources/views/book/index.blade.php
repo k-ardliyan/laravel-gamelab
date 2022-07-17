@@ -20,7 +20,7 @@
                         <th scope="col">Author</th>
                         <th scope="col">ISBN</th>
                         <th scope="col">Condition</th>
-                        <th scope="col">Action</th>
+                        <th scope="col" style="width: 150px !important;">Action</th>
                       </tr>
                     </thead>
                     <tbody>

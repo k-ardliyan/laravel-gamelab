@@ -70,6 +70,10 @@ class IssueController extends Controller
      */
     public function show(Issues $issue)
     {
+        // merge all tables
+        $issue = Issues::find($issue->id);
+        $issue->member;
+        $issue->book;
         // return json
         return response()->json($issue);
     }

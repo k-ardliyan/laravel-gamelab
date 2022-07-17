@@ -15,4 +15,10 @@ class Book extends Model
         'isbn',
         'condition',
     ];
+
+    public function issues()
+    {
+        // on column 'book_id' where 'is_booked' = 1
+        return $this->hasMany('App\Issues', 'book_id');
+    }
 }

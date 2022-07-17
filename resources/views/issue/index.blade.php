@@ -18,6 +18,7 @@
                         <th scope="col">#</th>
                         <th scope="col">Name</th>
                         <th scope="col">Book</th>
+                        <th scope="col">Return Date</th>
                         <th scope="col">Status</th>
                         <th scope="col">Action</th>
                       </tr>
@@ -28,6 +29,8 @@
                         <th scope="row">{{$loop->iteration}}</th>
                         <td>{{ $issue->member->first_name . ' ' . $issue->member->last_name }}</td>
                         <td>{{ $issue->book->title }}</td>
+                        {{-- format dd mmm yyyy --}}
+                        <td>{{ date('d M Y', strtotime($issue->return_date)) }}</td>
                         @if ($issue->is_booked == 1)
                           <td><span class="badge badge-light">Booked</span></td>
                         @else
@@ -65,22 +68,40 @@
         </div>
         <div class="modal-body">
             <div class="row mb-3">
-                <div class="col-3">
-                    <img src="{{ asset('images/cover_image_dummy.jpg') }}" alt="" class="w-100">
+                <div class="col-3 align-self-center">
+                    <img id="detailBookCover" src="{{ asset('images/cover_image_dummy.jpg') }}" alt="" class="w-100">
                 </div>
                 <div class="col">
-                    <div class="badge badge-light mb-2">Booked</div>
-                    <h4 class="mb-0" id="detailBookTitle">Sang Pemimpi</h4>
-                    <p id="detailBookAuthor">Andrea Hirata</p>
+                    <div class="badge badge-light mb-2" id="detailIsBooked"></div>
+                    <h4 class="mb-0" id="detailBookTitle"></h4>
+                    <div id="detailBookAuthor"></div>
+                    <div class="mt-3">Member:</div>
+                    <div><i class="fa fa-user"></i>
+                        <span id="detailMemberName"></span>
+                    </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-12">
-                    <span>Booked by</span>
-                    <div>Kholifatul Ardliyan</div>
-                    <div>Issue Date</div>
-                    <div>Return Date</div>
-                    <div>Due Date</div>
+            <div id="containerProgress" class="d-none">
+                <div class="row justify-content-between">
+                    <div class="col-auto">
+                        <div id="detailIssueDate"></div>
+                    </div>
+                    <div class="col-auto">
+                        <div id="detailReturnDate"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="progress mb-2">
+                            <div id="detailProgress" class="progress-bar progress-bar-striped progress-bar-animated"
+                                role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"
+                                style="width: 75%">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col text-right">
+                        <span id="detailDueDate"></span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -110,17 +131,21 @@
                 <div class="col">
                     <div class="form-row">
                         <div class="form-group col-12">
-                          <label for="inputBook">Find Book</label>
-                          <select name="book_id" id="inputBook" class="form-control p-0 select-live" title="Find the books...">
+                          <label for="inputBook">Find Book &mdash; <i class="fa fa-info text-danger" data-toggle="tooltip" data-placement="top" title="Changing the book can't go back to the previous book"></i></label>
+                          <select name="book_id" id="inputBook" class="form-control p-0 select-live" title="Find the books..." required>
                             {{-- cek books is booked on issues or not --}}
                             @foreach ($books as $book)
-                            <option data-icon="fa fa-book" value="{{ $book->id }}" data-subtext="{{ $book->author }}">{{ $book->title }}</option>
+                                @if ($book->issues->where('is_booked', 1)->count() == 0)
+                                    <option data-icon="fa fa-book" value="{{ $book->id }}" data-subtext="{{ $book->author }}">{{ $book->title }}</option>
+                                @else
+                                    <option data-icon="fa fa-book" value="{{ $book->id }}" data-subtext="{{ $book->author }}" disabled>{{ $book->title }}</option>
+                                @endif
                             @endforeach
                           </select>
                         </div>
                         <div class="form-group col-12">
                           <label for="inputMember">Find Member</label>
-                          <select name="member_id" id="inputMember" class="form-control p-0 select-live"title="Find the members...">
+                          <select name="member_id" id="inputMember" class="form-control p-0 select-live"title="Find the members..." required>
                             @foreach ($members as $member)
                               <option data-icon="fa fa-user" value="{{ $member->id }}">{{ $member->first_name . ' ' . $member->last_name}}</option>
                             @endforeach
@@ -129,19 +154,19 @@
                         <div class="form-row w-100">
                             <div class="form-group col-md-6">
                                 <label for="inputIssueDate">Issue Date</label>
-                                <input type="date" class="form-control" id="inputIssueDate" name="issue_date" value="{{ date('Y-m-d') }}">
+                                <input type="date" class="form-control" id="inputIssueDate" name="issue_date" value="{{ date('Y-m-d') }}" required>
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="inputReturnDate">Return Date</label>
-                                <input type="date" class="form-control" id="inputReturnDate" name="return_date" value="">
+                                <input type="date" class="form-control" id="inputReturnDate" name="return_date" value="" required>
                             </div>
                             <div class="form-group col-md-6">
-                                <label for="inputDueDate">Due Date</label>
-                                <input type="number" class="form-control" id="inputDueDate" name="due_date" readonly>
+                                <label for="inputDueDate">Duration</label>
+                                <input type="number" class="form-control" id="inputDueDate" name="due_date" readonly required>
                             </div>
                             <div class="form-group col-md-6">
-                                <label for="inputIsBooked">Is Booked</label>
-                                <select name="is_booked" id="inputIsBooked" class="form-control">
+                                <label for="inputIsBooked">Status</label>
+                                <select name="is_booked" id="inputIsBooked" class="form-control" required>
                                     <option value="0">Returned</option>
                                     <option value="1">Booked</option>
                                 </select>
@@ -205,6 +230,7 @@
 
     var detailIssue = function(id) {
         $('#issueDetailModal').appendTo("body").modal('show');
+        // Button
         $('#editIssue').attr('onclick', 'editIssue('+id+')');
         $('#deleteIssue').attr('onclick', 'deleteIssue('+id+')');
         $.ajax({
@@ -212,7 +238,56 @@
             type: 'GET',
             dataType: 'json',
             success: function(data) {
-
+                console.log(data);
+                $('#detailBookCover').attr('src','{{ url("/") }}'+'/storage/images/'+data.book.cover_image);
+                $('#detailBookTitle').text(data.book.title);
+                $('#detailBookAuthor').text(data.book.author);
+                $('#detailMemberName').text(data.member.first_name + ' ' + data.member.last_name);
+                // booked color badge not same
+                if (data.is_booked == 1) {
+                    $('#detailIsBooked').text('Booked');
+                    $('#detailIsBooked').removeClass('badge-success');
+                    $('#detailIsBooked').addClass('badge-light');
+                } else {
+                    $('#detailIsBooked').text('Returned');
+                    $('#detailIsBooked').removeClass('badge-light');
+                    $('#detailIsBooked').addClass('badge-success');
+                }
+                // for progress
+                if (data.is_booked == 1) {
+                    $('#containerProgress').removeClass('d-none');
+                    // convert issue and return date to DD mmm YYYY
+                    var issueDate = new Date(data.issue_date);
+                    var returnDate = new Date(data.return_date);
+                    var issueDateString = issueDate.getDate() + ' ' + issueDate.toLocaleString('default', { month: 'long' }) + ' ' + issueDate.getFullYear();
+                    var returnDateString = returnDate.getDate() + ' ' + returnDate.toLocaleString('default', { month: 'long' }) + ' ' + returnDate.getFullYear();
+                    $('#detailIssueDate').text(issueDateString);
+                    $('#detailReturnDate').text(returnDateString);
+                    // calculate progress bar
+                    var today = new Date();
+                    var total = returnDate - issueDate;
+                    var progress = (today - issueDate) / total * 100;
+                    $('#detailProgress').css('width', progress+'%');
+                    // calculate due date
+                    var dueDate = returnDate - today;
+                    var dueDateString = Math.floor(dueDate / (1000 * 60 * 60 * 24) + 1);
+                    // condition 0 and < 0 for due date
+                    if (dueDateString < 0) {
+                        $('#detailDueDate').text('Overdue');
+                        $('#detailDueDate').addClass('text-danger');
+                        $('#detailProgress').addClass('bg-danger');
+                    } else if (dueDateString == 0) {
+                        $('#detailDueDate').text('Today');
+                        $('#detailDueDate').addClass('text-warning');
+                        $('#detailProgress').addClass('bg-warning');
+                    } else {
+                        $('#detailDueDate').text(dueDateString + ' days left');
+                        $('#detailDueDate').addClass('text-success');
+                        $('#detailProgress').addClass('bg-success');
+                    }
+                } else {
+                    $('#containerProgress').addClass('d-none');
+                }
             }
         });
     }
@@ -255,6 +330,8 @@
                 $('#issueEditForm').attr('action', '{{ url('/issue') }}'+'/'+id);
                 $('#inputBook').val(data.book_id);
                 $('#inputBook').selectpicker('refresh');
+                $('#inputBook option[value="'+data.book_id+'"]').attr('selected', 'selected');
+                $('#inputBook option[selected="selected"]').removeAttr('disabled');
                 $('#inputMember').val(data.member_id);
                 $('#inputMember').selectpicker('refresh');
                 $('#inputIssueDate').val(data.issue_date);
